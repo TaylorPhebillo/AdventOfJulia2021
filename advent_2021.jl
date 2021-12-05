@@ -61,15 +61,15 @@ input_5 = readlines("day5.txt")
 function day5(input; diag=true)
     function process_line(line)
         a, b, c, d = parse.(Int, match(r"(\d+),(\d+) -> (\d+),(\d+)", line).captures)
-        if a > c
+        if a > c || (a == c && b > d) # For simplicity, a,b is on the bottom/left
             a, b, c, d = c, d, a, b
         end
         return a == c ? # Row
-                [(i+1, a+1) for i in min(b, d):max(b, d)] :
+                [(c+1, a+1) for c in b:d] : # Lots of +1s since Julia is 1-indexed
             b == d ? # Col
-                [(b+1, i+1) for i in a:c] :
+                [(b+1, r+1) for r in a:c] :
             diag ? # Diagonal, and diagonals are enabled. Up or down depending on d>b
-                [(b+1+(d>b ? 1 : -1), a+i+1) for i in 0:c-a] : []
+                [(b+1+i*(d>b ? 1 : -1), a+i+1) for i in 0:c-a] : []
     end
     return count(i->i[2]>1, counter(Iterators.flatten([process_line(l) for l in input])))
 end
