@@ -4,8 +4,6 @@ using BenchmarkTools
 input_1 = parse.(Int64, readlines("day1.txt"))
 day1(input, window) = count(i->input[i+window] > input[i], 1:length(input)-window)
 #day1(input_1, 1), day1(input_1, 3)
-# @code_native day1(input_1, 3)
-#@btime day1(input_1, 3);
 input_2 = split.(readlines("day2.txt"))
 function day2(input)
     commands = Dict("forward"=>(i, v)->(v[1], i+v[2], v[3]+i*v[1]),
@@ -73,5 +71,15 @@ function day5(input; diag=true)
     end
     return count(i->i[2]>1, counter(Iterators.flatten([process_line(l) for l in input])))
 end
-day5(input_5, diag=false), day5(input_5, diag=true)
-#@btime day5(input_5, diag=true)
+@assert(((day5(input_5, diag=false), day5(input_5, diag=true)) == (5306, 17787)))
+
+input_6 = readlines("day6.txt")
+function day6(input, time)
+    timers = [counter(parse.(Int, split(input[1],",")))[i] for i in 0:8]
+    for _ in 1:time
+        timers = vcat(timers[2:end], timers[1])
+        timers[7] += timers[end]
+    end
+    return sum(timers)
+end
+@assert((day6(input_6,80), day6(input_6, 256)) == (354564, 1609058859115))
