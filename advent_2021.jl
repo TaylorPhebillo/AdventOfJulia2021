@@ -1,6 +1,7 @@
 using InteractiveUtils
 using DataStructures
 using BenchmarkTools
+using Statistics
 input_1 = parse.(Int64, readlines("day1.txt"))
 day1(input, window) = count(i->input[i+window] > input[i], 1:length(input)-window)
 #day1(input_1, 1), day1(input_1, 3)
@@ -83,3 +84,12 @@ function day6(input, time)
     return sum(timers)
 end
 @assert((day6(input_6,80), day6(input_6, 256)) == (354564, 1609058859115))
+
+input_7 = readlines("day7.txt")
+function day7(input)
+    vals = parse.(Int, split(input[1],","))
+    (med_v, mean_v) = (median(vals), round(mean(vals)))
+    return sum(abs(med_v-v) for v in vals), minimum(sum((abs(v-i)*abs(v-i)+1)/2 for v in vals) for i in mean_v-1:mean_v+1)
+end
+@assert(day7(input_7) == (328318.0, 8.9621123e7))
+@btime day7(input_7)
